@@ -62,13 +62,12 @@ public enum Operator
         }
 
         @Override
-        public RangeSet<ClusteringElements> restrict(RangeSet<ClusteringElements> rangeSet, List<ClusteringElements> args)
+        public void restrict(RangeSet<ClusteringElements> rangeSet, List<ClusteringElements> args)
         {
-            assert args.size() == 1;
+            assert args.size() == 1 : this + " accept only one single value";
             ClusteringElements arg = args.get(0);
             rangeSet.removeAll(ClusteringElements.lessThan(arg));
             rangeSet.removeAll(ClusteringElements.greaterThan(arg));
-            return rangeSet;
         }
 
         @Override
@@ -104,11 +103,10 @@ public enum Operator
         }
 
         @Override
-        public RangeSet<ClusteringElements> restrict(RangeSet<ClusteringElements> rangeSet, List<ClusteringElements> args)
+        public void restrict(RangeSet<ClusteringElements> rangeSet, List<ClusteringElements> args)
         {
-            assert args.size() == 1;
+            assert args.size() == 1 : this + " accept only one single value";
             rangeSet.removeAll(ClusteringElements.atLeast(args.get(0)));
-            return rangeSet;
         }
 
         @Override
@@ -150,11 +148,10 @@ public enum Operator
         }
 
         @Override
-        public RangeSet<ClusteringElements> restrict(RangeSet<ClusteringElements> rangeSet, List<ClusteringElements> args)
+        public void restrict(RangeSet<ClusteringElements> rangeSet, List<ClusteringElements> args)
         {
-            assert args.size() == 1;
+            assert args.size() == 1 : this + " accept only one single value";
             rangeSet.removeAll(ClusteringElements.greaterThan(args.get(0)));
-            return rangeSet;
         }
 
         @Override
@@ -196,11 +193,10 @@ public enum Operator
         }
 
         @Override
-        public RangeSet<ClusteringElements> restrict(RangeSet<ClusteringElements> rangeSet, List<ClusteringElements> args)
+        public void restrict(RangeSet<ClusteringElements> rangeSet, List<ClusteringElements> args)
         {
-            assert args.size() == 1;
+            assert args.size() == 1 : this + " accept only one single value";
             rangeSet.removeAll(ClusteringElements.lessThan(args.get(0)));
-            return rangeSet;
         }
 
         @Override
@@ -242,11 +238,10 @@ public enum Operator
         }
 
         @Override
-        public RangeSet<ClusteringElements> restrict(RangeSet<ClusteringElements> rangeSet, List<ClusteringElements> args)
+        public void restrict(RangeSet<ClusteringElements> rangeSet, List<ClusteringElements> args)
         {
-            assert args.size() == 1;
+            assert args.size() == 1 : this + " accept only one single value";
             rangeSet.removeAll(ClusteringElements.atMost(args.get(0)));
-            return rangeSet;
         }
 
         @Override
@@ -629,7 +624,7 @@ public enum Operator
 
     public void validateFor(ColumnsExpression expression)
     {
-        if (!this.canBeUsedWith(expression.kind()))
+        if (!canBeUsedWith(expression.kind()))
             throw invalidRequest("%s cannot be used with %s relations", this, expression);
 
         switch (expression.kind())
@@ -720,15 +715,17 @@ public enum Operator
      * Restricts the specified range set based on the operator arguments (optional operation).
      * @param rangeSet the range set to restrict
      * @param args the operator arguments
-     * @return the restricted range set
      */
-    public RangeSet<ClusteringElements> restrict(RangeSet<ClusteringElements> rangeSet, List<ClusteringElements> args)
+    public void restrict(RangeSet<ClusteringElements> rangeSet, List<ClusteringElements> args)
     {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException(this + " is not a range operator");
     }
 
     /**
-     * Checks if this operator requires either filtering or indexing for the specified columns kinds.
+     * Checks if this operator <b>requires</b> either filtering or indexing for the specified columns kinds.
+     * <p>An operator requires filtering or indexing only if it cannot be executed by other means.
+     * An equal operator on a clustering column for example will return {@code false} even if filtering might be used
+     * because the previous clustering column is not restricted.</p>
      *
      * @param columnKind the kind of column being restricted by the operator
      * @return {@code true} if this operator requires either filtering or indexing, {@code false} otherwise.

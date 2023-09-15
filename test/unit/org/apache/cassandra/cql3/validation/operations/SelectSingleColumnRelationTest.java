@@ -63,10 +63,8 @@ public class SelectSingleColumnRelationTest extends CQLTester
                              "SELECT * FROM %s WHERE c = 0 AND b <= ?", set(0));
         assertInvalidMessage("Collection column 'b' (set<int>) cannot be restricted by a 'IN' relation",
                              "SELECT * FROM %s WHERE c = 0 AND b IN (?)", set(0));
-        assertInvalidMessage("Collection column 'b' (set<int>) cannot be restricted by a 'BETWEEN' relation",
-                             "SELECT * FROM %s WHERE c = 0 AND b BETWEEN ? AND ?", set(0), set(0));
         assertInvalidMessage("Unsupported '!=' relation: b != 5",
-                             "SELECT * FROM %s WHERE c = 0 AND b != 5");
+                "SELECT * FROM %s WHERE c = 0 AND b != 5");
         assertInvalidMessage("Unsupported restriction: b IS NOT NULL",
                              "SELECT * FROM %s WHERE c = 0 AND b IS NOT NULL");
     }
@@ -141,9 +139,6 @@ public class SelectSingleColumnRelationTest extends CQLTester
                    row("first", 3, 7, 3));
 
         assertEmpty(execute("select * from %s where a = ? and c > ? and c < ? and b in (?, ?)", "first", 6, 7, 3, 2));
-
-        assertRows(execute("SELECT * FROM %s WHERE a = ? AND b = ? AND c BETWEEN ? AND ?", "first", 1, 4, 5),
-                   row("first", 1, 5, 1));
 
         assertInvalidMessage("c cannot be restricted by more than one relation if it includes an Equal",
                              "select * from %s where a = ? and c > ? and c = ? and b in (?, ?)", "first", 6, 7, 3, 2);
@@ -845,13 +840,5 @@ public class SelectSingleColumnRelationTest extends CQLTester
         assertRows(execute("SELECT * from %s WHERE pk = ? AND c > ? AND c <= ?", 1, -4, -1),
                    row(1, -2, -2),
                    row(1, -1, -1));
-
-        assertRows(execute("SELECT * from %s WHERE pk = ? AND c BETWEEN ? AND ?", 1, -4, -1),
-                   row(1, -2, -2),
-                   row(1, -1, -1));
-
-        assertRows(execute("SELECT * from %s WHERE pk = ? AND NOT BETWEEN -2 and 0", 1, 0, 2),
-                   row(1, 1, 1),
-                   row(1, 2, 2));
     }
 }

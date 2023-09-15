@@ -18,6 +18,7 @@
 package org.apache.cassandra.cql3;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.cassandra.cql3.restrictions.SimpleRestriction;
 import org.apache.cassandra.cql3.restrictions.SingleRestriction;
@@ -72,6 +73,7 @@ public final class Relation
     public static Relation singleColumn(ColumnIdentifier identifier, Operator operator, Term.Raw rawTerm)
     {
         assert operator != Operator.IN;
+        assert operator != Operator.BETWEEN;
         return new Relation(ColumnsExpression.Raw.singleColumn(identifier), operator, Terms.Raw.of(rawTerm));
     }
 
@@ -110,10 +112,11 @@ public final class Relation
      * @param rawTerm the term (tuple) to which the multiple columns must be compared
      * @return a relation for multiple columns.
      */
-    public static Relation multiColumns(List<ColumnIdentifier> identifiers, Operator operator, Term.Raw rawTerm)
+    public static Relation multiColumn(List<ColumnIdentifier> identifiers, Operator operator, Term.Raw rawTerm)
     {
         assert operator != Operator.IN;
-        return new Relation(ColumnsExpression.Raw.multiColumns(identifiers), operator, Terms.Raw.of(rawTerm));
+        assert operator != Operator.BETWEEN;
+        return new Relation(ColumnsExpression.Raw.multiColumn(identifiers), operator, Terms.Raw.of(rawTerm));
     }
 
     /**
@@ -124,9 +127,9 @@ public final class Relation
      * @param rawTerms the terms (tuples) to which the multiple columns must be compared
      * @return a relation for multiple columns.
      */
-    public static Relation multiColumns(List<ColumnIdentifier> identifiers, Operator operator, Terms.Raw rawTerms)
+    public static Relation multiColumn(List<ColumnIdentifier> identifiers, Operator operator, Terms.Raw rawTerms)
     {
-        return new Relation(ColumnsExpression.Raw.multiColumns(identifiers), operator, rawTerms);
+        return new Relation(ColumnsExpression.Raw.multiColumn(identifiers), operator, rawTerms);
     }
 
     /**
@@ -194,6 +197,27 @@ public final class Relation
     public Relation renameIdentifier(ColumnIdentifier from, ColumnIdentifier to)
     {
         return new Relation(rawExpressions.renameIdentifier(from, to), operator, rawTerms);
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o)
+            return true;
+
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        Relation relation = (Relation) o;
+        return Objects.equals(rawExpressions, relation.rawExpressions)
+            && operator == relation.operator
+            && Objects.equals(rawTerms, relation.rawTerms);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(rawExpressions, operator, rawTerms);
     }
 
     /**

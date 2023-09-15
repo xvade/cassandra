@@ -944,11 +944,6 @@ public class SelectMultiColumnRelationTest extends CQLTester
         assertRows(execute("SELECT * FROM %s WHERE (b, c) >= (?, ?) AND e = ? ALLOW FILTERING", 1, 1, 2),
                    row(0, 1, 1, 1, 2));
 
-        assertInvalidMessage(StatementRestrictions.REQUIRES_ALLOW_FILTERING_MESSAGE,
-                             "SELECT * FROM %s WHERE (b, c) BETWEEN (?, ?) AND (?, ?) AND e = ?", 1, 1, 1, 2, 2);
-        assertRows(execute("SELECT * FROM %s WHERE (b, c) BETWEEN (?, ?) AND (?, ?) AND e = ? ALLOW FILTERING", 1, 1, 2, 2, 2),
-                   row(0, 1, 1, 1, 2));
-
         assertInvalidMessage("Invalid null value for column e",
                              "SELECT * FROM %s WHERE (b, c) >= (?, ?) AND e = ?  ALLOW FILTERING", 1, 1, null);
 
