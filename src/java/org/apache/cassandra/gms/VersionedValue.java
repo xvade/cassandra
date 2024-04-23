@@ -98,6 +98,7 @@ public class VersionedValue implements Comparable<VersionedValue>
     // values for ApplicationState.REMOVAL_COORDINATOR
     @Deprecated(since = "CEP-21")
     public final static String REMOVAL_COORDINATOR = "REMOVER";
+    public final static Set<String> BOOTSTRAPPING_STATUS = ImmutableSet.of(STATUS_BOOTSTRAPPING, STATUS_BOOTSTRAPPING_REPLACE);
 
     public static Set<String> BOOTSTRAPPING_STATUS = ImmutableSet.of(STATUS_BOOTSTRAPPING, STATUS_BOOTSTRAPPING_REPLACE);
 
