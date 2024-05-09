@@ -300,8 +300,9 @@ public enum Operator
             assert args.size() == 2;
             ClusteringElements left = args.get(0);
             ClusteringElements right = args.get(1);
-            ClusteringElements lesser = ClusteringElements.atLeast(left).contains(right) ? left : right;
-            ClusteringElements greater = ClusteringElements.atLeast(left).contains(right) ? right : left;
+            int comp = ClusteringElements.compareForCQL(left, right);
+            ClusteringElements lesser = comp < 0 ? left : right;
+            ClusteringElements greater = comp < 0 ? right : left;
             rangeSet.removeAll(ClusteringElements.lessThan(lesser));
             rangeSet.removeAll(ClusteringElements.greaterThan(greater));
             return rangeSet;
