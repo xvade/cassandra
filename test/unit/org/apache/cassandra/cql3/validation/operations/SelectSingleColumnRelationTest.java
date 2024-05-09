@@ -849,5 +849,9 @@ public class SelectSingleColumnRelationTest extends CQLTester
         assertRows(execute("SELECT * from %s WHERE pk = ? AND c BETWEEN ? AND ?", 1, -4, -1),
                    row(1, -2, -2),
                    row(1, -1, -1));
+
+        assertRows(execute("SELECT * from %s WHERE pk = ? AND NOT BETWEEN -2 and 0", 1, 0, 2),
+                   row(1, 1, 1),
+                   row(1, 2, 2));
     }
 }
