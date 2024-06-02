@@ -25,7 +25,6 @@ import java.util.Set;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.RangeSet;
 
-import org.apache.cassandra.cql3.Operator;
 import org.apache.cassandra.cql3.QueryOptions;
 import org.apache.cassandra.cql3.functions.Function;
 import org.apache.cassandra.db.filter.RowFilter;
@@ -141,15 +140,13 @@ public final class MergedRestriction implements SingleRestriction
                                      column.name);
             }
 
-            if ((restriction.operator() == Operator.GT || restriction.operator() == Operator.GTE || restriction.operator() == Operator.BETWEEN) &&
-                    (other.operator() == Operator.GT || other.operator() == Operator.GTE || other.operator() == Operator.BETWEEN))
+            if (restriction.operator().restrictsStartBound() && other.operator().restrictsStartBound())
             {
                 throw invalidRequest("More than one restriction was found for the start bound on %s",
                                      toCQLString(getColumnsInCommons(restriction, other)));
             }
 
-            if ((restriction.operator() == Operator.LT || restriction.operator() == Operator.LTE || restriction.operator() == Operator.BETWEEN) &&
-                    (other.operator() == Operator.LT || other.operator() == Operator.LTE || other.operator() == Operator.BETWEEN))
+            if (restriction.operator().restrictsEndBound() && other.operator().restrictsEndBound())
             {
                 throw invalidRequest("More than one restriction was found for the end bound on %s",
                                      toCQLString(getColumnsInCommons(restriction, other)));

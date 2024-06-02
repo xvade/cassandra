@@ -126,6 +126,12 @@ public enum Operator
         }
 
         @Override
+        public boolean restrictsEndBound()
+        {
+            return true;
+        }
+
+        @Override
         public boolean canBeUsedWith(ColumnsExpression.Kind kind)
         {
             return kind != ColumnsExpression.Kind.MAP_ELEMENT;
@@ -166,6 +172,12 @@ public enum Operator
 
         @Override
         public boolean isSlice()
+        {
+            return true;
+        }
+
+        @Override
+        public boolean restrictsEndBound()
         {
             return true;
         }
@@ -216,6 +228,12 @@ public enum Operator
         }
 
         @Override
+        public boolean restrictsStartBound()
+        {
+            return true;
+        }
+
+        @Override
         public boolean canBeUsedWith(ColumnsExpression.Kind kind)
         {
             return kind != ColumnsExpression.Kind.MAP_ELEMENT;
@@ -256,6 +274,12 @@ public enum Operator
 
         @Override
         public boolean isSlice()
+        {
+            return true;
+        }
+
+        @Override
+        public boolean restrictsStartBound()
         {
             return true;
         }
@@ -556,6 +580,18 @@ public enum Operator
         }
 
         @Override
+        public boolean restrictsStartBound()
+        {
+            return true;
+        }
+
+        @Override
+        public boolean restrictsEndBound()
+        {
+            return true;
+        }
+
+        @Override
         public Operator negate()
         {
             return NOT_BETWEEN;
@@ -603,6 +639,18 @@ public enum Operator
 
         @Override
         public boolean isSlice()
+        {
+            return true;
+        }
+
+        @Override
+        public boolean restrictsStartBound()
+        {
+            return true;
+        }
+
+        @Override
+        public boolean restrictsEndBound()
         {
             return true;
         }
@@ -837,6 +885,25 @@ public enum Operator
      * @return {@code true} if this operator is a slice operator, {@code false} otherwise.
      */
     public boolean isSlice()
+    {
+        return false;
+    }
+
+
+    /**
+    * Checks if this operator restricts the start bound of the data.
+     * @return {@code true} if this operator restricts the start bound, {@code false} otherwise.
+    */
+    public boolean restrictsStartBound()
+    {
+        return false;
+    }
+
+    /**
+     * Checks if this operator restricts the end bound of the data.
+     * @return {@code true} if this operator restricts the end bound, {@code false} otherwise.
+     */
+    public boolean restrictsEndBound()
     {
         return false;
     }
