@@ -72,8 +72,7 @@ public final class Relation
      */
     public static Relation singleColumn(ColumnIdentifier identifier, Operator operator, Term.Raw rawTerm)
     {
-        assert operator != Operator.IN;
-        assert operator != Operator.BETWEEN;
+        assert !operator.isTernary() && !operator.isMultiValue();
         return new Relation(ColumnsExpression.Raw.singleColumn(identifier), operator, Terms.Raw.of(rawTerm));
     }
 
@@ -114,7 +113,7 @@ public final class Relation
      */
     public static Relation multiColumn(List<ColumnIdentifier> identifiers, Operator operator, Term.Raw rawTerm)
     {
-        assert operator != Operator.IN && operator != Operator.BETWEEN;
+        assert !operator.isTernary() && !operator.isMultiValue();
         return new Relation(ColumnsExpression.Raw.multiColumn(identifiers), operator, Terms.Raw.of(rawTerm));
     }
 
