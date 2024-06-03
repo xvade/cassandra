@@ -92,6 +92,11 @@ public class DeleteTest extends CQLTester
 
         assertRows(execute("SELECT * FROM %s WHERE a = ? AND b = ?", 2, 1),
                    row(2, 1, 2));
+
+        execute("DELETE FROM %s WHERE a = ? AND b NOT BETWEEN ? AND ?", 2, 3, 6);
+        flush(flushTombstone);
+
+        assertEmpty(execute("SELECT * FROM %s WHERE a = ? AND b = ?", 2, 1));
         assertEmpty(execute("SELECT * FROM %s WHERE a = ? AND b = ?", 2, 2));
         assertEmpty(execute("SELECT * FROM %s WHERE a = ? AND b = ?", 2, 3));
     }
@@ -714,7 +719,7 @@ public class DeleteTest extends CQLTester
         execute("INSERT INTO %s (a, b, c) VALUES(1, 2, '2')");
         flush();
 
-        execute("DELETE FROM %s where a=1 and b >= 2 and b <= 3");
+        execute("DELETE FROM %s where a=1 and b not between 0 and 1");
         flush();
 
         assertRows(execute("SELECT * FROM %s WHERE a = ?", 1),
@@ -1203,11 +1208,13 @@ public class DeleteTest extends CQLTester
                    row(9), row(8), row(1), row(0)
         );
 
+        execute("DELETE FROM %s WHERE k = ? AND i NOT BETWEEN ? AND ?", "a", 2, 7);
+
+        assertEmpty(execute("SELECT i FROM %s WHERE k = ? ORDER BY i DESC", "a"));
+
         flush();
 
-        assertRows(execute("SELECT i FROM %s WHERE k = ? ORDER BY i DESC", "a"),
-            row(9), row(8), row(1), row(0)
-        );
+        assertEmpty(execute("SELECT i FROM %s WHERE k = ? ORDER BY i DESC", "a"));
     }
 
     @Test
@@ -1446,6 +1453,8 @@ public class DeleteTest extends CQLTester
 
         execute("DELETE FROM %s USING TIMESTAMP 1 WHERE k = ? AND i BETWEEN ? AND ?", "a", 12, 13);
 
+        execute("DELETE FROM %s USING TIMESTAMP 1 WHERE k = ? AND i NOT BETWEEN ? AND ?", "a", 16, 0);
+
         flush();
 
         execute("INSERT INTO %s(k, i, v) VALUES (?, ?, ?) USING TIMESTAMP 0", "a", 3, longText);
@@ -1457,7 +1466,6 @@ public class DeleteTest extends CQLTester
 
         assertRows(execute("SELECT i FROM %s WHERE k = ? ORDER BY i DESC", "a"),
                    row(18),
-                   row(17),
                    row(16),
                    row(14),
                    row(12),

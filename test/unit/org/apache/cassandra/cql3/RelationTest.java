@@ -58,6 +58,7 @@ public class RelationTest
         assertEquals("col = 'text'", singleColumn(col, Operator.EQ, text).toCQLString());
         assertEquals("col >= ?", singleColumn(col, Operator.GTE, marker).toCQLString());
         assertEquals("col BETWEEN 1 AND 2", singleColumn(col, Operator.BETWEEN, oneTwo).toCQLString());
+        assertEquals("col NOT BETWEEN 1 AND 2", singleColumn(col, Operator.NOT_BETWEEN, oneTwo).toCQLString());
         assertEquals("col IN ?", singleColumn(col, Operator.IN, inMarker).toCQLString());
         assertEquals("col IN (1, 2)", singleColumn(col, Operator.IN, oneTwo).toCQLString());
         assertEquals("col IN (1)", singleColumn(col, Operator.IN, Terms.Raw.of(List.of(one))).toCQLString());

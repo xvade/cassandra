@@ -744,6 +744,7 @@ syntax_rules += r'''
                              ")" ("=" | "<" | ">" | "<=" | ">=") <tokenDefinition>
              | [rel_lhs]=<cident> "IN" "(" <term> ( "," <term> )* ")"
              | [rel_rhs]=<cident> "BETWEEN" <term> "AND" <term>
+             | [rel_rhs]=<cident> "NOT BETWEEN" <term> "AND" <term>
              ;
 <selectClause> ::= "DISTINCT"? <selector> ("AS" <cident>)? ("," <selector> ("AS" <cident>)?)*
                  | "*"
